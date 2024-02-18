@@ -7,7 +7,7 @@ import { config } from './config';
 export class ShyftApiService {
   private readonly _httpClient = inject(HttpClient);
   private readonly _header = { 'x-api-key': config.shyftApiKey };
-  private readonly _mint = config.shyftApiKey;
+  private readonly _mint = config.mint;
 
   getBalance(publicKey: string | undefined | null) {
     if (!publicKey) {
