@@ -19,7 +19,7 @@ import { TransferModalComponent } from './transfer-modal.component';
       @if (!account()) {
         <p class="text-center">Conecta tu wallet para ver tu balance.</p>
       } @else {
-        <div class="flex justify-center items-center gap-2">
+        <div class="flex justify-center items-center gap-2 mb-4">
           <img [src]="account()?.info?.image" class="w-16 h-16" />
           <p class="text-5xl font-bold">{{ account()?.balance }}</p>
         </div>
