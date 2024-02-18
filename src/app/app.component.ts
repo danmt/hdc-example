@@ -1,9 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterOutlet } from '@angular/router';
-import { injectPublicKey } from '@heavy-duty/wallet-adapter';
+import { ConnectionStore, injectPublicKey } from '@heavy-duty/wallet-adapter';
 import { HdWalletMultiButtonComponent } from '@heavy-duty/wallet-adapter-material';
 import { computedAsync } from 'ngxtension/computed-async';
 import { ShyftApiService } from './shyft-api.service';
+import { TransferModalComponent } from './transfer-modal.component';
 
 @Component({
   standalone: true,
@@ -32,11 +34,25 @@ import { ShyftApiService } from './shyft-api.service';
     </main>
   `,
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private readonly _shyftApiService = inject(ShyftApiService);
   private readonly _publicKey = injectPublicKey();
+  private readonly _matDialog = inject(MatDialog);
+  private readonly _connectionStore = inject(ConnectionStore);
 
   readonly balance = computedAsync(() =>
     this._shyftApiService.getBalance(this._publicKey()?.toBase58()),
   );
+
+  ngOnInit() {
+    const url = new URL('https://rpc.shyft.to');
+
+    url.searchParams.set('api_key', 'S3VW7sB4rNNZUmtS');
+
+    this._connectionStore.setEndpoint(url.toString());
+  }
+
+  onTransfer() {
+    this._matDialog.open(TransferModalComponent);
+  }
 }

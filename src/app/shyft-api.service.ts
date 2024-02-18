@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { map, of } from 'rxjs';
+import { config } from './config';
 
 @Injectable({ providedIn: 'root' })
 export class ShyftApiService {
   private readonly _httpClient = inject(HttpClient);
-  private readonly _header = { 'x-api-key': 'S3VW7sB4rNNZUmtS' };
-  private readonly _mint = '7EYnhQoR9YM3N7UoaKRoA44Uy8JeaZV3qyouov87awMs';
+  private readonly _header = { 'x-api-key': config.shyftApiKey };
+  private readonly _mint = config.shyftApiKey;
 
   getBalance(publicKey: string | undefined | null) {
     if (!publicKey) {
