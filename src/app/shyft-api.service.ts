@@ -9,6 +9,14 @@ export class ShyftApiService {
   private readonly _header = { 'x-api-key': config.shyftApiKey };
   private readonly _mint = config.mint;
 
+  getEndpoint() {
+    const url = new URL('https://rpc.shyft.to');
+
+    url.searchParams.set('api_key', config.shyftApiKey);
+
+    return url.toString();
+  }
+
   getBalance(publicKey: string | undefined | null) {
     if (!publicKey) {
       return of(null);
