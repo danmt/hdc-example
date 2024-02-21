@@ -4,7 +4,6 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { createTransferInstructions } from '@heavy-duty/spl-utils';
 import { injectTransactionSender } from '@heavy-duty/wallet-adapter';
-import { PublicKey } from '@solana/web3.js';
 import { config } from './config';
 import {
   TransferFormComponent,
@@ -59,9 +58,9 @@ export class TransferModalComponent {
     this._transactionSender
       .send(({ publicKey }) =>
         createTransferInstructions({
-          sender: publicKey,
-          receiver: new PublicKey(payload.receiver),
-          mint: new PublicKey(config.mint),
+          senderAddress: publicKey.toBase58(),
+          receiverAddress: payload.receiver,
+          mintAddress: config.mint,
           amount: payload.amount,
           fundReceiver: true,
           memo: payload.memo,
