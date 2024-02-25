@@ -3,8 +3,12 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { createTransferInstructions } from '@heavy-duty/spl-utils';
-import { injectTransactionSender } from '@heavy-duty/wallet-adapter';
-import { config } from './config';
+import {
+  injectPublicKey,
+  injectTransactionSender,
+} from '@heavy-duty/wallet-adapter';
+import { computedAsync } from 'ngxtension/computed-async';
+import { ShyftApiService } from './shyft-api.service';
 import {
   TransferFormComponent,
   TransferFormPayload,
@@ -18,6 +22,7 @@ import {
 
       <bob-transfer-form
         [disabled]="isRunning()"
+        [tokens]="allTokens() ?? []"
         (sendTransfer)="onSendTransfer($event)"
         (cancelTransfer)="onCancelTransfer()"
       ></bob-transfer-form>
@@ -43,6 +48,8 @@ export class TransferModalComponent {
   private readonly _matDialogRef = inject(MatDialogRef);
   private readonly _matSnackBar = inject(MatSnackBar);
   private readonly _transactionSender = injectTransactionSender();
+  private readonly _publicKey = injectPublicKey();
+  private readonly _shyftApiService = inject(ShyftApiService);
 
   readonly transactionStatus = computed(() => this._transactionSender().status);
   readonly isRunning = computed(
@@ -50,6 +57,9 @@ export class TransferModalComponent {
       this.transactionStatus() === 'sending' ||
       this.transactionStatus() === 'confirming' ||
       this.transactionStatus() === 'finalizing',
+  );
+  readonly allTokens = computedAsync(() =>
+    this._shyftApiService.getAllTokens(this._publicKey()?.toBase58()),
   );
 
   onSendTransfer(payload: TransferFormPayload) {
@@ -60,7 +70,7 @@ export class TransferModalComponent {
         createTransferInstructions({
           senderAddress: publicKey.toBase58(),
           receiverAddress: payload.receiver,
-          mintAddress: config.mint,
+          mintAddress: payload.mintAddress,
           amount: payload.amount,
           fundReceiver: true,
           memo: payload.memo,

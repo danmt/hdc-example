@@ -72,4 +72,27 @@ export class ShyftApiService {
       )
       .pipe(map((response) => response.result));
   }
+
+  getAllTokens(publicKey: string | undefined | null) {
+    if (!publicKey) {
+      return of(null);
+    }
+
+    const url = new URL('https://api.shyft.to/sol/v1/wallet/all_tokens');
+
+    url.searchParams.set('network', 'mainnet-beta');
+    url.searchParams.set('wallet', publicKey);
+
+    return this._httpClient
+      .get<{
+        result: {
+          address: string;
+          balance: number;
+          info: { name: string; symbol: string; image: string };
+        }[];
+      }>(url.toString(), {
+        headers: this._header,
+      })
+      .pipe(map((response) => response.result));
+  }
 }
